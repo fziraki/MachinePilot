@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MachinePilot"
 include(":app")
+include(":machine-sdk")
