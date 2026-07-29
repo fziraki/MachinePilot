@@ -69,7 +69,7 @@ FakeMachineClient ──Flow──▶ MachineRepositoryImpl ──Flow──▶ 
 | Architecture | MVI (State / Action / Event) |
 | DI | Hilt |
 | Async | Kotlin Coroutines + Flow |
-| SDK | Kotlin Multiplatform‑ready module (`:machine-sdk`) |
+| SDK | Android library module (`:machine-sdk`) |
 | Compile SDK | 37 (Android 15) |
 | Min SDK | 26 |
 

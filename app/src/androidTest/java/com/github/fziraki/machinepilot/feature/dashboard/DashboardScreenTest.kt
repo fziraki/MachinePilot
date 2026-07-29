@@ -2,11 +2,10 @@ package com.github.fziraki.machinepilot.feature.dashboard
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.github.fziraki.machinepilot.domain.model.AlertSeverity
 import com.github.fziraki.machinepilot.designsystem.theme.MachinePilotTheme
+import com.github.fziraki.machinepilot.domain.model.AlertSeverity
 import org.junit.Rule
 import org.junit.Test
 
