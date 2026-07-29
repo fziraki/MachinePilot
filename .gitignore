@@ -46,7 +46,3 @@ google-services.json
 .externalNativeBuild
 .cxx
 
-.ai/
-docs/
-
-graphify-out/
