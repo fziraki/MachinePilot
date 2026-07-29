@@ -73,24 +73,6 @@ FakeMachineClient ──Flow──▶ MachineRepositoryImpl ──Flow──▶ 
 | Compile SDK | 37 (Android 15) |
 | Min SDK | 26 |
 
-## Project Structure
-
-```
-MachinePilot/
-├── app/                          # Main application module
-│   └── src/main/java/.../machinepilot/
-│       ├── data/                 # Repository impl, mappers, DI
-│       ├── domain/               # Models, repository interfaces, analyzer
-│       ├── designsystem/theme/   # Color, typography, theme
-│       └── feature/dashboard/    # MVI screen
-├── machine-sdk/                  # Standalone SDK library (pure Kotlin)
-│   └── src/main/kotlin/.../sdk/
-│       ├── MachineClient.kt      # Client interface
-│       ├── FakeMachineClient.kt  # Simulated implementation
-│       └── MachineTelemetry.kt   # SDK data models
-└── gradle/libs.versions.toml     # Version catalog
-```
-
 ## Screenshots
 
 <!--
@@ -101,20 +83,9 @@ MachinePilot/
   ![Active Alerts Panel](docs/screenshots/alerts.png)
 -->
 
-| Dashboard | Emergency Stop | Alerts |
-|-----------|---------------|--------|
-| `docs/screenshots/dashboard.png` | `docs/screenshots/emergency_stop.png` | `docs/screenshots/alerts.png` |
-
-## Getting Started
-
-```bash
-# Clone
-git clone https://github.com/fziraki/MachinePilot.git
-
-# Open in Android Studio — sync Gradle, then run on API 26+ device/emulator
-```
-
-No API keys or backend setup required. All telemetry is fake in-memory.
+| Dashboard | Emergency Stop |
+|-----------|---------------|
+| `docs/screenshots/dashboard.png` | `docs/screenshots/emergency_stop.png` |
 
 ## License
 
