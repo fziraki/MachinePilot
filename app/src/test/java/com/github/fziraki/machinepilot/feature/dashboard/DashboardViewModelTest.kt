@@ -104,7 +104,7 @@ private class FakeRepository(
         analysis = MachineAnalysis(
             alerts = emptyList(),
             diagnostics = emptyList(),
-            healthStatus = HealthStatus.NOMINAL,
+            healthStatus = HealthStatus.NORMAL,
         ),
         operatingState = MachineOperatingState.OPERATIONAL,
     ),
@@ -135,7 +135,7 @@ private class FakeRepository(
             operatingState = MachineOperatingState.OPERATIONAL,
             analysis = current.analysis.copy(
                 alerts = current.analysis.alerts.filter { it.title != "Emergency Stop Activated" },
-                healthStatus = HealthStatus.NOMINAL,
+                healthStatus = HealthStatus.NORMAL,
             ),
         )
     }

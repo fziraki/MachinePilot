@@ -34,7 +34,7 @@ object MachineAnalyzer {
         val healthStatus = when {
             alerts.any { it.severity == AlertSeverity.CRITICAL } -> HealthStatus.CRITICAL
             alerts.isNotEmpty() -> HealthStatus.WARNING
-            else -> HealthStatus.NOMINAL
+            else -> HealthStatus.NORMAL
         }
 
         return MachineAnalysis(alerts, diagnostics, healthStatus)

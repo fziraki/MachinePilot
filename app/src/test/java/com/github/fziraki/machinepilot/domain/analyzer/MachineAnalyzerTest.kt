@@ -9,9 +9,9 @@ import org.junit.Test
 class MachineAnalyzerTest {
 
     @Test
-    fun `nominal telemetry returns NOMINAL health`() {
+    fun `nominal telemetry returns NORMAL health`() {
         val result = MachineAnalyzer.analyze(nominalTelemetry())
-        assertEquals(HealthStatus.NOMINAL, result.healthStatus)
+        assertEquals(HealthStatus.NORMAL, result.healthStatus)
         assertEquals(0, result.alerts.size)
     }
 

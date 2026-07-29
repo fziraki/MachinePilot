@@ -12,10 +12,10 @@ internal fun Double.formatBattery() = ((this / 12.6) * 100).toInt().coerceIn(0, 
 internal fun HealthStatus.deriveBusStatus() = when (this) {
     HealthStatus.CRITICAL -> "ERROR"
     HealthStatus.WARNING -> "WARN"
-    HealthStatus.NOMINAL -> "OK"
+    HealthStatus.NORMAL -> "OK"
 }
 internal fun HealthStatus.formatHealthStatus() = when (this) {
-    HealthStatus.NOMINAL -> "OPERATIONAL"
+    HealthStatus.NORMAL -> "OPERATIONAL"
     HealthStatus.WARNING -> "WARNING"
     HealthStatus.CRITICAL -> "CRITICAL"
 }

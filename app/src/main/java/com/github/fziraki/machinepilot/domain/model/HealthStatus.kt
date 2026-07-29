@@ -1,3 +1,3 @@
 package com.github.fziraki.machinepilot.domain.model
 
-enum class HealthStatus { NOMINAL, WARNING, CRITICAL }
+enum class HealthStatus { NORMAL, WARNING, CRITICAL }

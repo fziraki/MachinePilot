@@ -54,13 +54,13 @@ class FormattingExtensionsTest {
     fun `deriveBusStatus maps correctly`() {
         assertEquals("ERROR", HealthStatus.CRITICAL.deriveBusStatus())
         assertEquals("WARN", HealthStatus.WARNING.deriveBusStatus())
-        assertEquals("OK", HealthStatus.NOMINAL.deriveBusStatus())
+        assertEquals("OK", HealthStatus.NORMAL.deriveBusStatus())
     }
 
     @Test
     fun `formatHealthStatus maps correctly`() {
         assertEquals("CRITICAL", HealthStatus.CRITICAL.formatHealthStatus())
         assertEquals("WARNING", HealthStatus.WARNING.formatHealthStatus())
-        assertEquals("OPERATIONAL", HealthStatus.NOMINAL.formatHealthStatus())
+        assertEquals("OPERATIONAL", HealthStatus.NORMAL.formatHealthStatus())
     }
 }

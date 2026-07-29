@@ -1,11 +1,13 @@
 package com.github.fziraki.machinepilot.data.repository
 
 import com.github.fziraki.machinepilot.machinesdk.sdk.FakeMachineClient
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.time.Duration.Companion.milliseconds
 
 class FakeMachineClientTest {
 
@@ -28,7 +30,7 @@ class FakeMachineClientTest {
         val client = FakeMachineClient()
         client.emergencyStop()
         // after emergency stop, enough delay to process one emission
-        kotlinx.coroutines.delay(300)
+        delay(300.milliseconds)
         val t = client.telemetry.first()
 
         assertEquals(0, t.powertrain.engineRpm)
@@ -39,9 +41,9 @@ class FakeMachineClientTest {
     fun `releaseEmergencyStop resumes normal range`() = runTest {
         val client = FakeMachineClient()
         client.emergencyStop()
-        kotlinx.coroutines.delay(300)
+        delay(300.milliseconds)
         client.releaseEmergencyStop()
-        kotlinx.coroutines.delay(300)
+        delay(300.milliseconds)
         val t = client.telemetry.first()
 
         assertTrue("RPM resumed", t.powertrain.engineRpm > 0 || t.powertrain.engineRpm == 0)
