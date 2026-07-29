@@ -1,5 +1,6 @@
 package com.github.fziraki.machinepilot.feature.dashboard
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,21 +26,34 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.fziraki.machinepilot.R
 import com.github.fziraki.machinepilot.designsystem.theme.MachinePilotTheme
 import com.github.fziraki.machinepilot.domain.model.AlertSeverity
+import kotlinx.coroutines.delay
+import java.time.Instant
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import kotlin.time.Duration.Companion.seconds
+
+private val timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss")
 
 @Composable
 fun DashboardRoot(
@@ -49,10 +63,6 @@ fun DashboardRoot(
     DashboardScreen(state = state, onAction = viewModel::onAction)
 }
 
-// ─────────────────────────────────────────────
-// DashboardScreen – entry composable
-// ─────────────────────────────────────────────
-
 @Composable
 fun DashboardScreen(
     state: DashboardState,
@@ -60,10 +70,6 @@ fun DashboardScreen(
 ) {
     TabletHmiLayout(state, onAction)
 }
-
-// ─────────────────────────────────────────────
-// Tablet Frame (device chassis)
-// ─────────────────────────────────────────────
 
 @Composable
 private fun TabletHmiLayout(
@@ -185,10 +191,6 @@ private fun HmiContent(
     }
 }
 
-// ─────────────────────────────────────────────
-// Top Status Bar
-// ─────────────────────────────────────────────
-
 @Composable
 private fun TopStatusBar(state: DashboardState) {
     val healthColor = when (state.healthStatus) {
@@ -196,14 +198,14 @@ private fun TopStatusBar(state: DashboardState) {
         "WARNING" -> Color(0xFFD29922)
         else -> Color(0xFF3FB950)
     }
-    val sdf = androidx.compose.runtime.remember { java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()) }
-    val currentTime = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(sdf.format(System.currentTimeMillis())) }
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    val currentTime = remember { mutableStateOf(LocalTime.now().format(timeFormat)) }
+    LaunchedEffect(Unit) {
         while (true) {
-            kotlinx.coroutines.delay(1000L)
-            currentTime.value = sdf.format(System.currentTimeMillis())
+            delay(1.seconds)
+            currentTime.value = LocalTime.now().format(timeFormat)
         }
     }
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -220,8 +222,13 @@ private fun TopStatusBar(state: DashboardState) {
                     .background(healthColor),
             )
             Spacer(Modifier.width(8.dp))
+            val displayStatus = when (state.healthStatus) {
+                "OPERATIONAL" -> stringResource(R.string.health_operational)
+                "CRITICAL" -> stringResource(R.string.health_critical)
+                else -> state.healthStatus
+            }
             Text(
-                text = state.healthStatus,
+                text = displayStatus,
                 style = MaterialTheme.typography.labelLarge,
                 color = healthColor,
                 fontWeight = FontWeight.Bold,
@@ -236,10 +243,6 @@ private fun TopStatusBar(state: DashboardState) {
     }
 }
 
-// ─────────────────────────────────────────────
-// Left Column – Machine Overview
-// ─────────────────────────────────────────────
-
 @Composable
 private fun MachineOverviewPanel(
     state: DashboardState,
@@ -248,14 +251,14 @@ private fun MachineOverviewPanel(
     Column(
         modifier = modifier.padding(12.dp).fillMaxWidth(),
     ) {
-        PanelLabel("Machine Overview")
+        PanelLabel(stringResource(R.string.machine_overview))
 
         Spacer(Modifier.height(12.dp))
 
         OverviewGauge(
-            label = "Engine Speed",
+            label = stringResource(R.string.engine_speed),
             value = state.rpm,
-            unit = "RPM",
+            unit = stringResource(R.string.rpm_unit),
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -263,9 +266,9 @@ private fun MachineOverviewPanel(
         Spacer(Modifier.height(8.dp))
 
         OverviewGauge(
-            label = "Ground Speed",
+            label = stringResource(R.string.ground_speed),
             value = state.speed,
-            unit = "km/h",
+            unit = stringResource(R.string.kmh_unit),
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -277,15 +280,15 @@ private fun MachineOverviewPanel(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             MiniGauge(
-                label = "Fuel",
+                label = stringResource(R.string.fuel),
                 value = state.fuel,
-                unit = "%",
+                unit = stringResource(R.string.percent_unit),
                 modifier = Modifier.weight(1f),
             )
             MiniGauge(
-                label = "Temp",
+                label = stringResource(R.string.temp),
                 value = state.engineTemp,
-                unit = "\u00B0C",
+                unit = stringResource(R.string.celsius_unit),
                 modifier = Modifier.weight(1f),
             )
         }
@@ -293,26 +296,22 @@ private fun MachineOverviewPanel(
         Spacer(Modifier.height(8.dp))
 
         MiniGauge(
-            label = "Hydraulic Pressure",
+            label = stringResource(R.string.hydraulic_pressure),
             value = state.hydraulicPressure,
-            unit = "bar",
+            unit = stringResource(R.string.bar_unit),
             modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(Modifier.height(8.dp))
 
         MiniGauge(
-            label = "Engine Hours",
+            label = stringResource(R.string.engine_hours),
             value = state.engineHours,
-            unit = "h",
+            unit = stringResource(R.string.hours_unit),
             modifier = Modifier.fillMaxWidth(),
         )
     }
 }
-
-// ─────────────────────────────────────────────
-// Center Column – System Health
-// ─────────────────────────────────────────────
 
 @Composable
 private fun SystemHealthPanel(
@@ -322,7 +321,7 @@ private fun SystemHealthPanel(
     Column(
         modifier = modifier.padding(12.dp).fillMaxWidth(),
     ) {
-        PanelLabel("System Health")
+        PanelLabel(stringResource(R.string.system_health))
 
         Spacer(Modifier.height(12.dp))
 
@@ -335,7 +334,7 @@ private fun SystemHealthPanel(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Battery",
+                    text = stringResource(R.string.battery),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -351,7 +350,7 @@ private fun SystemHealthPanel(
                         color = MaterialTheme.colorScheme.primary,
                     )
                     Text(
-                        text = "V",
+                        text = stringResource(R.string.volt_unit),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -374,21 +373,17 @@ private fun SystemHealthPanel(
             ),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                StatusRow(label = "CAN Bus", status = state.canStatus)
+                StatusRow(label = stringResource(R.string.can_bus), status = state.canStatus)
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-                StatusRow(label = "ECU", status = state.ecuStatus)
+                StatusRow(label = stringResource(R.string.ecu), status = state.ecuStatus)
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-                StatusRow(label = "GPS", status = if (state.gpsConnected) "OK" else "OFF")
+                StatusRow(label = stringResource(R.string.gps), status = if (state.gpsConnected) stringResource(R.string.status_ok) else stringResource(R.string.status_off))
             }
         }
 
 
     }
 }
-
-// ─────────────────────────────────────────────
-// Right Column – Active Alerts
-// ─────────────────────────────────────────────
 
 @Composable
 private fun ActiveAlertsPanel(
@@ -399,7 +394,7 @@ private fun ActiveAlertsPanel(
         modifier = modifier.padding(12.dp).fillMaxWidth(),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            PanelLabel("Active Alerts")
+            PanelLabel(stringResource(R.string.active_alerts))
             if (state.alerts.isNotEmpty()) {
                 Spacer(Modifier.width(8.dp))
                 Box(
@@ -428,7 +423,7 @@ private fun ActiveAlertsPanel(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "No active alerts",
+                    text = stringResource(R.string.no_active_alerts),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -445,10 +440,6 @@ private fun ActiveAlertsPanel(
         }
     }
 }
-
-// ─────────────────────────────────────────────
-// Status Row (colored dot + label + status)
-// ─────────────────────────────────────────────
 
 @Composable
 private fun StatusRow(
@@ -488,10 +479,6 @@ private fun StatusRow(
     }
 }
 
-// ─────────────────────────────────────────────
-// Bottom Control Bar
-// ─────────────────────────────────────────────
-
 @Composable
 private fun BottomControlBar(
     state: DashboardState,
@@ -507,39 +494,35 @@ private fun BottomControlBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ControlButton(
-            label = "ACKNOWLEDGE ALL",
+            label = stringResource(R.string.acknowledge_all),
             color = MaterialTheme.colorScheme.primary,
-            onClick = { android.widget.Toast.makeText(context, "Not implemented", android.widget.Toast.LENGTH_SHORT).show() },
+            onClick = { Toast.makeText(context, R.string.not_implemented, Toast.LENGTH_SHORT).show() },
         )
         if (state.isEmergencyStopped) {
             ControlButton(
-                label = "RELEASE EMERGENCY STOP (SIMULATE)",
+                label = stringResource(R.string.release_emergency_stop),
                 color = Color(0xFF3FB950),
                 onClick = { onAction(DashboardAction.ReleaseEmergencyStop) },
             )
         } else {
             ControlButton(
-                label = "EMERGENCY STOP (SIMULATE)",
+                label = stringResource(R.string.emergency_stop),
                 color = Color(0xFFF85149),
                 onClick = { onAction(DashboardAction.EmergencyStop) },
             )
         }
         ControlButton(
-            label = "SYSTEM INFO",
+            label = stringResource(R.string.system_info),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            onClick = { android.widget.Toast.makeText(context, "Not implemented", android.widget.Toast.LENGTH_SHORT).show() },
+            onClick = { Toast.makeText(context, R.string.not_implemented, Toast.LENGTH_SHORT).show() },
         )
         ControlButton(
-            label = "SETTINGS",
+            label = stringResource(R.string.settings),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            onClick = { android.widget.Toast.makeText(context, "Not implemented", android.widget.Toast.LENGTH_SHORT).show() },
+            onClick = { Toast.makeText(context, R.string.not_implemented, Toast.LENGTH_SHORT).show() },
         )
     }
 }
-
-// ─────────────────────────────────────────────
-// Shared Composables
-// ─────────────────────────────────────────────
 
 @Composable
 private fun PanelLabel(text: String) {
@@ -649,9 +632,9 @@ private fun AlertCard(alert: AlertUi) {
         AlertSeverity.CRITICAL -> MaterialTheme.colorScheme.error
     }
     val severityLabel = when (alert.severity) {
-        AlertSeverity.INFO -> "INFO"
-        AlertSeverity.WARNING -> "WARNING"
-        AlertSeverity.CRITICAL -> "CRITICAL"
+        AlertSeverity.INFO -> stringResource(R.string.severity_info)
+        AlertSeverity.WARNING -> stringResource(R.string.severity_warning)
+        AlertSeverity.CRITICAL -> stringResource(R.string.severity_critical)
     }
     Card(
         shape = RoundedCornerShape(6.dp),
@@ -742,7 +725,7 @@ private fun EmergencyBanner() {
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "EMERGENCY STOP ACTIVE",
+            text = stringResource(R.string.emergency_stop_active),
             style = MaterialTheme.typography.titleMedium,
             color = Color(0xFFF85149),
             fontWeight = FontWeight.Bold,
@@ -763,13 +746,8 @@ private fun VerticalDividerLine() {
 
 private fun formatTimestamp(millis: Long): String {
     if (millis == 0L) return ""
-    val sdf = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
-    return sdf.format(java.util.Date(millis))
+    return Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).format(timeFormat)
 }
-
-// ─────────────────────────────────────────────
-// Preview
-// ─────────────────────────────────────────────
 
 @Preview(showBackground = true, widthDp = 1280, heightDp = 800)
 @Composable
