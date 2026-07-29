@@ -64,7 +64,7 @@ FakeMachineClient ──Flow──▶ MachineRepositoryImpl ──Flow──▶ 
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+|---|---|
 | UI | Jetpack Compose + Material 3 |
 | Architecture | MVI (State / Action / Event) |
 | DI | Hilt |
@@ -75,17 +75,10 @@ FakeMachineClient ──Flow──▶ MachineRepositoryImpl ──Flow──▶ 
 
 ## Screenshots
 
-<!--
-  Add screenshots to docs/screenshots/ and uncomment these:
-
-  ![Dashboard Overview](docs/screenshots/dashboard.png)
-  ![Emergency Stop Active](docs/screenshots/emergency_stop.png)
-  ![Active Alerts Panel](docs/screenshots/alerts.png)
--->
-
-| Dashboard | Emergency Stop |
-|-----------|---------------|
-| `docs/screenshots/dashboard.png` | `docs/screenshots/emergency_stop.png` |
+| View | File |
+|---|---|
+| Dashboard | `docs/screenshots/dashboard.png` |
+| Emergency Stop | `docs/screenshots/emergency_stop.png` |
 
 ## License
 
