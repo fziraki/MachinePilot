@@ -75,10 +75,10 @@ FakeMachineClient ──Flow──▶ MachineRepositoryImpl ──Flow──▶ 
 
 ## Screenshots
 
-| View | File |
-|---|---|
-| Dashboard | `docs/screenshots/dashboard.png` |
-| Emergency Stop | `docs/screenshots/emergency_stop.png` |
+<p float="left">
+  <img src="docs/screenshots/dashboard.png" width="400" />
+  <img src="docs/screenshots/emergency_stop.png" width="400" />
+</p>
 
 ## License
 
